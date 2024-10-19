@@ -1,0 +1,64 @@
+:root {
+	--trans-3: 0.3s;
+	--bg-gray: #4b4b4b;
+    --bg-green: #90caf9;
+}
+
+
+/* ================== Reusable Classes ================== */
+/* Colors */
+.bg-gray {
+	background-color: var(--bg-gray);
+}
+.bg-green {
+    background-color: var(--bg-green) !important;
+}
+button.bg-primary:hover {
+	background-color: #0d4aa5 !important;
+	transition: var(--trans-3);
+}
+button.bg-danger:hover {
+    background-color: #b42f3b !important;
+}
+
+/* Dimensions */
+.h-300 {
+	height: 150px;
+}
+
+/* Spaces */
+.mt-6 {
+	margin-top: 5.5rem !important;
+}
+
+/* Fonts */
+.font-big {
+	font-size: 4.5rem;
+}
+
+@media (min-width: 576px) {
+	/* Dimensions */
+	.h-300 {
+		height: 180px;
+	}
+}
+
+
+/* ================== Main Styles ================== */
+.card {
+	position: relative;
+	transition: var(--trans-3);
+	transform-style: preserve-3d;
+	&.active {
+		transform: rotateY(180deg);
+	}
+	div {
+		position: absolute;
+		left: 0;
+		top: 0;
+		backface-visibility: hidden;
+        &.front-face {
+            transform: rotateY(-180deg);
+        }
+	}
+}
