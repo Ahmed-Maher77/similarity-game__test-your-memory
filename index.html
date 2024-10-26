@@ -3,56 +3,159 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
+		<title>Memory Match Game - Test Your Skills and Have Fun!</title>
+		<meta name="description" content="Play the Memory Match Game, a fun and challenging card-matching game to test your memory skills. Built with HTML, CSS, JavaScript, and Bootstrap for an interactive experience.">
+		<meta name="keywords" content="Memory Match Game, Card Matching Game, HTML Game, JavaScript Game, Bootstrap Game, Fun Memory Game, Memory Skills, Card Game Online">
+		<meta name="author" content="Ahmed Maher">
+		<!-- Logo -->
+		<link rel="icon" href="images/logo.png">
+		<!-- Font Awesome -->
 		<link rel="stylesheet" href="css/all.min.css" />
+		<!-- Bootstrap -->
 		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<!-- Main Styles -->
 		<link rel="stylesheet" href="css/style.css" />
 	</head>
 	<body>
 		<main>
 			<header class="bg-secondary-subtle">
-				<div class="container-fluid p-3 px-4 d-flex justify-content-between flex-wrap gap-3">
-					<!-- Attempts -->
-					<div class="attempts d-flex gap-3 align-items-center">
-						<p class="mb-0 fs-4 fw-medium">Attempts:</p>
-						<div class="hearts mt-1">
-							<!-- <i class="fa-solid fa-heart fs-4 text-danger"></i>
-							<i class="fa-solid fa-heart fs-4 text-danger"></i>
-							<i class="fa-solid fa-heart fs-4 text-danger"></i>
-							<i class="fa-solid fa-heart fs-4 text-danger"></i>
-							<i class="fa-solid fa-heart fs-4 text-danger"></i> -->
+				<div class="container-fluid p-2 px-4">
+					<div class="row row-gap-2">
+						<!-- Attempts -->
+						<div class="attempts d-flex gap-2 align-items-center col-12 col-md">
+							<p class="mb-0 fs-6 fs-md-4 fw-medium">Attempts:</p>
+							<div class="hearts mt-1"></div>
 						</div>
+						<!-- Matched Pairs -->
+						<div
+							class="matched-pairs d-flex gap-1 align-items-center fs-6 fs-md-4 fw-medium col"
+						>
+							<p class="mb-0">Matched Pairs:</p>
+							<span></span>
+						</div>
+						<!-- Start Button -->
+						<button
+							class="btn bg-primary text-white p-205 px-4 rounded-pill mw-fit"
+							id="start-btn"
+						>
+							<i class="fa-solid fa-play me-2"></i> Start Game
+						</button>
 					</div>
-					<!-- Matched Pairs -->
-					<div class="matched-pairs d-flex gap-3 align-items-center fs-4 fw-medium">
-						<p class="mb-0">Matched Pairs:</p>
-						<span></span>
-					</div>
-					<!-- Start Button -->
-					<button class="btn bg-primary text-white p-2 px-3 rounded-1" id="start-btn">
-						Start Game
-					</button>
 				</div>
 			</header>
 			<div class="container">
-				<div class="cards row mt-4 row-gap-3">
-					<!-- <div class="col-6 col-lg-3">
-                    <div class="border ">1</div>
-                </div>
-                <div class="col-6 col-lg-3">
-                    <div class="border ">1</div>
-                </div>
-                <div class="col-6 col-lg-3">
-                    <div class="border ">1</div>
-                </div>
-                <div class="col-6 col-lg-3">
-                    <div class="border ">1</div>
-                </div> -->
+				<div class="cards row mt-5 row-gap-3 justify-content-center"></div>
+			</div>
+
+			<!-- Popup Messages -->
+			<div class="msgs">
+				<!-- Button to trigger the Success Modal -->
+				<button
+					id="trigger-success"
+					type="button"
+					class="btn btn-primary d-none"
+					data-bs-toggle="modal"
+					data-bs-target="#staticBackdrop"
+				>
+					Launch demo modal
+				</button>
+				<!-- Success Modal  -->
+				<div
+					class="modal fade success-modal"
+					id="staticBackdrop"
+					tab="-1"
+					aria-labelledby="staticBackdropLabel"
+					aria-hidden="true"
+				>
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button
+									type="button"
+									class="btn-close"
+									data-bs-dismiss="modal"
+									aria-label="Close"
+								></button>
+							</div>
+							<div class="modal-body text-center py-5">
+								<h3 class="mb-5">Congratulations! 👏 You won</h3>
+								<p class="fw-medium fs-5">
+									Attempts: <span class="text-danger success-attempts"></span>
+								</p>
+								<p class="fw-medium fs-5">
+									Matched Pairs: <span class="text-success">5</span>/5
+								</p>
+							</div>
+							<div class="modal-footer d-flex justify-content-between">
+								<button
+									type="button"
+									class="btn btn-danger py-2 close-success-msg"
+									data-bs-dismiss="modal"
+								>
+									Close
+								</button>
+								<button type="button" class="btn btn-primary py-2 restart-game">
+									<i class="fa-solid fa-rotate-left"></i> Start a new game
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Button to trigger the Fail Modal -->
+				<button
+					id="trigger-fail"
+					type="button"
+					class="btn btn-primary d-none"
+					data-bs-toggle="modal"
+					data-bs-target="#fail"
+				>
+					Launch demo modal
+				</button>
+				<!-- Fail Modal  -->
+				<div
+					class="modal fade success-modal"
+					id="fail"
+					tab="-1"
+					aria-labelledby="staticBackdropLabel"
+					aria-hidden="true"
+				>
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button
+									type="button"
+									class="btn-close"
+									data-bs-dismiss="modal"
+									aria-label="Close"
+								></button>
+							</div>
+							<div class="modal-body text-center py-5">
+								<h3 class="mb-5">You lost 😥</h3>
+								<p class="fw-medium fs-5">
+									Attempts: <span class="text-danger fail-attempts"></span>
+								</p>
+								<p class="fw-medium fs-5">
+									Matched Pairs: <span class="text-success fail-matched-pairs"></span>/5
+								</p>
+							</div>
+							<div class="modal-footer d-flex justify-content-between">
+								<button
+									type="button"
+									class="btn btn-danger py-2 close-fail-msg"
+									data-bs-dismiss="modal"
+								>
+									Close
+								</button>
+								<button type="button" class="btn btn-primary py-2 restart-game">
+									<i class="fa-solid fa-rotate-left"></i> Start a new game
+								</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</main>
 
-		<script src="js/all.min.js"></script>
 		<script src="js/bootstrap.bundle.min.js"></script>
 		<script src="js/index.js"></script>
 	</body>
