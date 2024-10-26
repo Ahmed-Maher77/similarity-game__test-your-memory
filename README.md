@@ -1,6 +1,7 @@
 # Similarity Game (Memory Game)
 A fun and interactive card-matching game designed to test and improve memory skills. Built using HTML, CSS, JavaScript, and Bootstrap, this game provides a user-friendly interface and a responsive design for an engaging experience on various devices. The game challenges players to match pairs of cards with minimal attempts, keeping track of their progress and performance. Perfect for casual gaming, brain training, or learning purposes.
 
+<hr>
 
 ### Used Technologies:
 - **HTML**
@@ -9,11 +10,12 @@ A fun and interactive card-matching game designed to test and improve memory ski
 - **Bootstrap**
 - **Other Libraries:** font awesome
 
+<hr>
 
 ### Demo (Live Preview):
-Feel free to play the game: <a href="" target="_blank" title="Play the game"></a>
+Feel free to play the game: <a href="https://ahmed-maher77.github.io/similarity-game__test-your-memory/" target="_blank" title="Play the game">https://ahmed-maher77.github.io/similarity-game__test-your-memory</a>
 
-
+<hr>
 
 ### Key Features:
 - **Interactive Gameplay:** Players flip cards to find matching pairs, testing their memory skills.
@@ -25,6 +27,7 @@ Feel free to play the game: <a href="" target="_blank" title="Play the game"></a
 - **Pop-up Modals:** Uses pop-up modals to display results and game-related information in an engaging manner.
 - **Cross-Browser Compatibility:** The game is tested and works well in all modern web browsers.
 
+<hr>
 
 ### Instructions for Local Setup
 To run this project locally, follow these steps:
