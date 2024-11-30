@@ -59,7 +59,7 @@ showMatchedPairs();
 
 
 // arrange cards randomly
-const shuffleCards = (els) => els.sort(() => 0.5 - Math.random());
+const shuffleCards = (els) => els.sort(() => 0.5 - Math.random()).sort(() => 0.5 - Math.random());
 
 
 // loop over cards >> create each card >> append them to their parent
