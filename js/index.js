@@ -296,9 +296,26 @@ function restartGame() {
 	firstCard = null;
 	secondCard = null;
 
+	// Reset button state
+	startBtn.innerHTML = `<i class="fa-solid fa-play me-2"></i> Start Game`;
+	startBtn.classList.replace("rounded", "rounded-pill");
+	startBtn.classList.replace("bg-danger", "bg-primary");
+
+	// Shuffle and regenerate cards for restart
 	shuffleCards(cards);
-	regenerateCards();
-	startBtn.click();
+	regenerateCardsForRestart();
+
+	// Start the game directly without clicking the button
+	audioManager.playGameStart();
+	flipCards();
+	startBtn.innerHTML = `<i class="fa-solid fa-rotate-left"></i> Restart the Game`;
+	startBtn.classList.replace("rounded-pill", "rounded");
+	startBtn.classList.replace("bg-primary", "bg-danger");
+
+	setTimeout(() => {
+		resetCards();
+		gameStarted = true;
+	}, 1000);
 }
 
 /* ================== CARD MANAGEMENT ================== */
@@ -356,6 +373,36 @@ function regenerateCards() {
 	cardsContainer.classList.add("game-start");
 	setTimeout(() => showCardsImmediately(), 200);
 	setTimeout(() => cardsContainer.classList.remove("game-start"), 1200);
+	attachCardEventListeners();
+}
+
+// regenerate cards for restart (no conflicting animations)
+function regenerateCardsForRestart() {
+	cardsContainer.innerHTML = "";
+	shuffleCards(cards).forEach((card, index) => {
+		cardsContainer.innerHTML += `
+			<div class="col-4 col-sm-3 col-lg-2">
+				<div 
+					class="card border h-300" 
+					data-id='${card.id}'
+					role="gridcell"
+					tabindex="0"
+					aria-label="Card ${index + 1}, click to flip"
+					aria-describedby="card-${index + 1}-description"
+				>
+					<div class="front-face font-big bg-secondary h-100 w-100 d-flex justify-content-center align-items-center px-2 rounded">
+						<p class="mb-0" id="card-${index + 1}-description">${card.symbol}</p>
+					</div>
+					<div class="back-face bg-gray h-100 w-100 rounded" aria-hidden="true">
+						<span class="visually-hidden">Card back, click to reveal</span>
+					</div>
+				</div>
+			</div>
+		`;
+	});
+
+	// Show cards immediately without animations
+	showCardsImmediately();
 	attachCardEventListeners();
 }
 
@@ -447,10 +494,13 @@ function createWelcomeMessage() {
 		</div>
 	`;
 	document.body.appendChild(welcomeDiv);
+	document.body.style.overflow = "hidden";
 
 	setTimeout(() => {
 		if (welcomeDiv.parentNode) {
 			welcomeDiv.parentNode.removeChild(welcomeDiv);
+			window.scrollTo(0, 0, { behavior: "smooth" });
+			document.body.style.overflow = "auto";
 		}
 		triggerCardAnimations();
 		triggerFooterAnimation();
