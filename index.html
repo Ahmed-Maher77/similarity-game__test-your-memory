@@ -4,6 +4,8 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Memory Match Game - Test Your Skills and Have Fun!</title>
+
+		<!-- SEO Meta Tags -->
 		<meta
 			name="description"
 			content="Play the Memory Match Game, a fun and challenging card-matching game to test your memory skills. Built with HTML, CSS, JavaScript, and Bootstrap for an interactive experience."
@@ -13,101 +15,157 @@
 			content="Memory Match Game, Card Matching Game, HTML Game, JavaScript Game, Bootstrap Game, Fun Memory Game, Memory Skills, Card Game Online"
 		/>
 		<meta name="author" content="Ahmed Maher" />
-		<!-- Logo -->
+
+		<!-- Favicon -->
 		<link rel="icon" href="images/logo.png" />
-		<!-- Font Awesome -->
+
+		<!-- Stylesheets -->
 		<link rel="stylesheet" href="css/all.min.css" />
-		<!-- Bootstrap -->
 		<link rel="stylesheet" href="css/bootstrap.min.css" />
-		<!-- Main Styles -->
 		<link rel="stylesheet" href="css/style.css" />
 	</head>
 	<body>
-		<main>
-			<header class="bg-secondary-subtle">
+		<!-- Skip to main content link for screen readers -->
+		<a
+			href="#game-board"
+			class="visually-hidden-focusable btn btn-primary position-absolute"
+			style="top: 10px; left: 10px; z-index: 10000"
+		>
+			Skip to main content
+		</a>
+
+		<main role="main" aria-label="Memory Match Game">
+			<!-- Game Header -->
+			<header class="bg-secondary-subtle" role="banner">
 				<div class="container-fluid p-2 px-4">
 					<div class="row row-gap-2">
-						<!-- Attempts -->
+						<!-- Attempts Counter -->
 						<div
 							class="attempts d-flex gap-2 align-items-center col-12 col-md"
+							role="status"
+							aria-live="polite"
+							aria-label="Game progress"
 						>
 							<p class="mb-0 fs-6 fs-md-4 fw-medium">Attempts:</p>
-							<div class="hearts mt-1"></div>
+							<div
+								class="hearts mt-1"
+								aria-label="Hearts representing remaining attempts"
+							></div>
 						</div>
-						<!-- Matched Pairs -->
+
+						<!-- Matched Pairs Counter -->
 						<div
 							class="matched-pairs d-flex gap-1 align-items-center fs-6 fs-md-4 fw-medium col"
+							role="status"
+							aria-live="polite"
+							aria-label="Matched pairs progress"
 						>
 							<p class="mb-0">Matched Pairs:</p>
-							<span></span>
+							<span aria-label="Number of matched pairs">0</span>
 						</div>
-						<!-- Audio Toggle -->
+
+						<!-- Audio Toggle Button -->
 						<button
 							class="btn btn-outline-secondary p-205 px-3 rounded-pill mw-fit me-2"
 							id="audio-toggle"
-							title="Toggle Sound"
+							aria-label="Toggle sound effects"
+							aria-pressed="true"
 						>
-							<i class="fa-solid fa-volume-high"></i>
+							<i
+								class="fa-solid fa-volume-high"
+								aria-hidden="true"
+							></i>
+							<span class="visually-hidden">Sound is on</span>
 						</button>
-						<!-- Start Button -->
+
+						<!-- Start Game Button -->
 						<button
 							class="btn bg-primary text-white p-205 px-4 rounded-pill mw-fit"
 							id="start-btn"
+							aria-describedby="game-instructions"
 						>
-							<i class="fa-solid fa-play me-2"></i> Start Game
+							<i
+								class="fa-solid fa-play me-2"
+								aria-hidden="true"
+							></i>
+							Start Game
 						</button>
 					</div>
 				</div>
 			</header>
+
+			<!-- Game Instructions -->
+			<div id="game-instructions" class="visually-hidden">
+				Memory Match Game: Click cards to flip them and find matching
+				pairs. You have 5 attempts to match all 5 pairs. Use the audio
+				toggle to enable or disable sound effects.
+			</div>
+
+			<!-- Game Board -->
 			<div class="container">
 				<div
+					id="game-board"
 					class="cards row mt-5 row-gap-3 justify-content-center"
+					role="grid"
+					aria-label="Memory game cards"
+					aria-describedby="game-instructions"
 				></div>
 			</div>
 
-			<!-- Popup Messages -->
-			<div class="msgs">
-				<!-- Button to trigger the Success Modal -->
+			<!-- Modal System -->
+			<div class="msgs" aria-live="polite" aria-atomic="true">
+				<!-- Success Modal Trigger -->
 				<button
 					id="trigger-success"
 					type="button"
 					class="btn btn-primary d-none"
 					data-bs-toggle="modal"
-					data-bs-target="#staticBackdrop"
+					data-bs-target="#success-modal"
+					aria-label="Open success message"
 				>
-					Launch demo modal
+					Launch success modal
 				</button>
-				<!-- Success Modal  -->
+
+				<!-- Success Modal -->
 				<div
 					class="modal fade success-modal"
-					id="staticBackdrop"
-					tab="-1"
-					aria-labelledby="staticBackdropLabel"
+					id="success-modal"
+					tabindex="-1"
+					aria-labelledby="success-modal-title"
 					aria-hidden="true"
+					role="dialog"
 				>
 					<div class="modal-dialog modal-dialog-centered">
 						<div class="modal-content">
 							<div class="modal-header">
+								<h2
+									id="success-modal-title"
+									class="modal-title h3"
+								>
+									Congratulations! You won
+								</h2>
 								<button
 									type="button"
 									class="btn-close"
 									data-bs-dismiss="modal"
-									aria-label="Close"
+									aria-label="Close success message"
 								></button>
 							</div>
 							<div class="modal-body text-center py-5">
-								<h3 class="mb-5">
-									Congratulations! 👏 You won
-								</h3>
 								<p class="fw-medium fs-5">
-									Attempts:
+									Attempts used:
 									<span
 										class="text-danger success-attempts"
+										aria-label="Number of attempts used"
 									></span>
 								</p>
 								<p class="fw-medium fs-5">
 									Matched Pairs:
-									<span class="text-success">5</span>/5
+									<span
+										class="text-success"
+										aria-label="All 5 pairs matched"
+										>5</span
+									>/5
 								</p>
 							</div>
 							<div
@@ -123,54 +181,69 @@
 								<button
 									type="button"
 									class="btn btn-primary py-2 restart-game"
+									aria-label="Start a new game"
 								>
-									<i class="fa-solid fa-rotate-left"></i>
+									<i
+										class="fa-solid fa-rotate-left"
+										aria-hidden="true"
+									></i>
 									Start a new game
 								</button>
 							</div>
 						</div>
 					</div>
 				</div>
-				<!-- Button to trigger the Fail Modal -->
+
+				<!-- Fail Modal Trigger -->
 				<button
 					id="trigger-fail"
 					type="button"
 					class="btn btn-primary d-none"
 					data-bs-toggle="modal"
-					data-bs-target="#fail"
+					data-bs-target="#fail-modal"
+					aria-label="Open failure message"
 				>
-					Launch demo modal
+					Launch fail modal
 				</button>
-				<!-- Fail Modal  -->
+
+				<!-- Fail Modal -->
 				<div
 					class="modal fade success-modal"
-					id="fail"
-					tab="-1"
-					aria-labelledby="staticBackdropLabel"
+					id="fail-modal"
+					tabindex="-1"
+					aria-labelledby="fail-modal-title"
 					aria-hidden="true"
+					role="dialog"
 				>
 					<div class="modal-dialog modal-dialog-centered">
 						<div class="modal-content">
 							<div class="modal-header">
+								<h2
+									id="fail-modal-title"
+									class="modal-title h3"
+								>
+									Game Over - You lost
+								</h2>
 								<button
 									type="button"
 									class="btn-close"
 									data-bs-dismiss="modal"
-									aria-label="Close"
+									aria-label="Close failure message"
 								></button>
 							</div>
 							<div class="modal-body text-center py-5">
-								<h3 class="mb-5">You lost 😥</h3>
 								<p class="fw-medium fs-5">
-									Attempts:
+									Attempts used:
 									<span
 										class="text-danger fail-attempts"
+										aria-label="Number of attempts used"
 									></span>
 								</p>
 								<p class="fw-medium fs-5">
 									Matched Pairs:
 									<span
 										class="text-success fail-matched-pairs"
+										aria-label="Number of pairs matched"
 									></span
 									>/5
 								</p>
@@ -188,8 +261,12 @@
 								<button
 									type="button"
 									class="btn btn-primary py-2 restart-game"
+									aria-label="Start a new game"
 								>
-									<i class="fa-solid fa-rotate-left"></i>
+									<i
+										class="fa-solid fa-rotate-left"
+										aria-hidden="true"
+									></i>
 									Start a new game
 								</button>
 							</div>
@@ -199,6 +276,7 @@
 			</div>
 		</main>
 
+		<!-- Scripts -->
 		<script src="js/bootstrap.bundle.min.js"></script>
 		<script src="js/index.js"></script>
 	</body>

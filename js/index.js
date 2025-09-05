@@ -1,12 +1,13 @@
+/* ================== GAME STATE VARIABLES ================== */
 let attempts = 5;
 let matched_pairs = 0;
 let gameStarted = false;
-// flag to temporarily disable clicks while the match check is in progress
-let isCheckingMatch = false;
+let isCheckingMatch = false; // Prevents clicks during match check
 let firstCard, secondCard;
+let initialLoadComplete = false;
 const restartGame_btns = document.querySelectorAll(".restart-game");
 
-// Audio system
+/* ================== AUDIO SYSTEM ================== */
 class AudioManager {
 	constructor() {
 		this.audioContext = null;
@@ -54,86 +55,69 @@ class AudioManager {
 
 	toggle() {
 		this.isEnabled = !this.isEnabled;
-		const icon = document.querySelector("#audio-toggle i");
-		if (this.isEnabled) {
-			icon.className = "fa-solid fa-volume-high";
-		} else {
-			icon.className = "fa-solid fa-volume-mute";
-		}
+		const audioToggle = document.querySelector("#audio-toggle");
+		const icon = audioToggle.querySelector("i");
+		const statusText = audioToggle.querySelector(".visually-hidden");
+
+		icon.className = this.isEnabled
+			? "fa-solid fa-volume-high"
+			: "fa-solid fa-volume-mute";
+
+		// toggle aria-pressed and aria-label (for accessibility)
+		audioToggle.setAttribute("aria-pressed", this.isEnabled);
+		statusText.textContent = this.isEnabled
+			? "Sound is on"
+			: "Sound is off";
 	}
 
 	playGameStart() {
-		// Ascending melody for game start
 		const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
 		notes.forEach((note, index) => {
-			setTimeout(() => {
-				this.playTone(note, 0.3, "sine", 0.2);
-			}, index * 150);
+			setTimeout(
+				() => this.playTone(note, 0.3, "sine", 0.2),
+				index * 150
+			);
 		});
 	}
 
 	playWin() {
-		// Victory fanfare
 		const notes = [523.25, 659.25, 783.99, 1046.5, 1318.51]; // C5, E5, G5, C6, E6
 		notes.forEach((note, index) => {
-			setTimeout(() => {
-				this.playTone(note, 0.4, "sine", 0.25);
-			}, index * 200);
+			setTimeout(
+				() => this.playTone(note, 0.4, "sine", 0.25),
+				index * 200
+			);
 		});
 	}
 
 	playLose() {
-		// Descending sad melody
 		const notes = [523.25, 466.16, 415.3, 369.99]; // C5, A#4, G#4, F#4
 		notes.forEach((note, index) => {
-			setTimeout(() => {
-				this.playTone(note, 0.5, "sawtooth", 0.2);
-			}, index * 200);
+			setTimeout(
+				() => this.playTone(note, 0.5, "sawtooth", 0.2),
+				index * 200
+			);
 		});
 	}
 
 	playMatch() {
-		// Short success sound
 		this.playTone(659.25, 0.2, "sine", 0.15); // E5
 	}
 
 	playWrong() {
-		// Short error sound
 		this.playTone(220, 0.3, "sawtooth", 0.2); // A3
 	}
 }
 
-// Initialize audio manager
 const audioManager = new AudioManager();
 
-// Enable audio on first user interaction
-function enableAudio() {
-	if (
-		audioManager.audioContext &&
-		audioManager.audioContext.state === "suspended"
-	) {
-		audioManager.audioContext.resume();
-	}
-}
-
-// Add event listeners for audio enablement
-document.addEventListener("click", enableAudio, { once: true });
-document.addEventListener("touchstart", enableAudio, { once: true });
-
-// Audio toggle button
-const audioToggle = document.getElementById("audio-toggle");
-audioToggle.addEventListener("click", () => {
-	audioManager.toggle();
-});
-
+/* ================== CARD CLASS & DATA ================== */
 class Card {
 	constructor(id, symbol) {
 		this.id = id;
 		this.symbol = symbol;
 	}
 }
-
-// array of cards
 const cards = [
 	new Card(1, "⭐"),
 	new Card(1, "⭐"),
@@ -147,8 +131,18 @@ const cards = [
 	new Card(5, "🤷‍♀️"),
 ];
 
-// Attempts
+/* ================== SELECT DOM ELEMENTS ================== */
 const heartsContainer = document.querySelector(".hearts");
+const matchedPairsSpan = document.querySelector(".matched-pairs span");
+const cardsContainer = document.querySelector(".cards");
+const startBtn = document.getElementById("start-btn");
+const audioToggle = document.getElementById("audio-toggle");
+const failMatchedPairs = document.querySelector(".fail-matched-pairs");
+const closeFailMsg = document.querySelector(".close-fail-msg");
+const closeSuccessMsg = document.querySelector(".close-success-msg");
+
+/* ================== GAME FUNCTIONS ================== */
+// show hearts
 function showHearts() {
 	heartsContainer.innerHTML = "";
 	for (let i = 0; i < attempts; i++) {
@@ -156,151 +150,79 @@ function showHearts() {
 		heart.className = "fa-solid fa-heart fs-5 text-danger pe-1";
 		heartsContainer.appendChild(heart);
 	}
+
+	// Trigger animation for hearts (reset and restart)
+	const heartElements = heartsContainer.querySelectorAll("i");
+	heartElements.forEach((heart, index) => {
+		heart.style.animation = "none";
+		heart.offsetHeight; // Trigger reflow
+		heart.style.animation = "heartPopIn 0.4s ease-out forwards";
+		heart.style.animationDelay = "0s"; // Immediate animation for gameplay
+	});
+
 	if (attempts <= 0) {
-		setTimeout(() => {
-			failMsg();
-		}, 500);
+		setTimeout(() => failMsg(), 500);
 	}
 }
-showHearts();
 
-// Matched Pairs
-const matchedPairsSpan = document.querySelector(".matched-pairs span");
+// show matched pairs
 function showMatchedPairs() {
 	matchedPairsSpan.innerText = matched_pairs;
 	if (matched_pairs >= cards.length / 2) {
 		successMsg();
 	}
 }
-showMatchedPairs();
 
-// arrange cards randomly
-const shuffleCards = (els) =>
-	els.sort(() => 0.5 - Math.random()).sort(() => 0.5 - Math.random());
-
-// loop over cards >> create each card >> append them to their parent
-const cardsContainer = document.querySelector(".cards");
-shuffleCards(cards).forEach((card) => {
-	cardsContainer.innerHTML += `
-        <div class="col-4 col-sm-3 col-lg-2">
-            <div class="card border h-300" data-id='${card.id}'>
-                <div class="front-face font-big bg-secondary h-100 w-100 d-flex justify-content-center align-items-center px-2 rounded">
-                    <p class="mb-0">${card.symbol}</p>
-                </div>
-                <div class="back-face bg-gray h-100 w-100 rounded"></div>
-            </div>
-        </div>
-    `;
-});
-
-// Function to attach event listeners to card elements
-function attachCardEventListeners() {
-	const cardElements = cardsContainer.querySelectorAll(".card");
-
-	// Adjust Cursor Status
-	cardElements.forEach((card) => {
-		card.onmouseover = () => {
-			if (gameStarted && !card.classList.contains("active")) {
-				card.style.cursor = "pointer";
-			} else {
-				card.style.cursor = "not-allowed";
-			}
-		};
-	});
-
-	// when click on each card
-	cardElements.forEach((card) => {
-		card.onclick = function () {
-			if (
-				gameStarted &&
-				!isCheckingMatch &&
-				card.getAttribute("data-match") !== "matched"
-			) {
-				card.classList.add("active");
-				if (!firstCard) {
-					firstCard = card;
-				} else {
-					secondCard = card;
-					isCheckingMatch = true;
-				}
-
-				if (firstCard && secondCard) isMatch();
-			}
-		};
-	});
+// shuffle cards
+function shuffleCards(els) {
+	return els.sort(() => 0.5 - Math.random()).sort(() => 0.5 - Math.random());
 }
 
-// Attach initial event listeners
-attachCardEventListeners();
-
-// when click the start button >> change its content [start a new game], its color [bg-danger]
-const startBtn = document.getElementById("start-btn");
-startBtn.addEventListener("click", () => {
-	if (!gameStarted) {
-		// Play game start sound
-		audioManager.playGameStart();
-
-		flipCards();
-		// change the button content
-		startBtn.innerHTML = `<i class="fa-solid fa-rotate-left"></i> Restart the Game`;
-		startBtn.classList.replace("rounded-pill", "rounded");
-		startBtn.classList.replace("bg-primary", "bg-danger");
-
-		// Reset cards after 2s
-		setTimeout(() => {
-			resetCards();
-			gameStarted = true;
-		}, 1000);
-	} else {
-		restartGame();
-	}
-});
-
-// flip all cards
+// flip cards
 function flipCards() {
 	const cardElements = cardsContainer.querySelectorAll(".card");
-	cardElements.forEach((card) => {
-		card.classList.add("active");
-	});
+	cardElements.forEach((card) => card.classList.add("active"));
 }
 
-// Reset Cards
+// reset cards
 function resetCards() {
 	const cardElements = cardsContainer.querySelectorAll(".card");
-	cardElements.forEach((card) => {
+	cardElements.forEach((card, index) => {
 		card.classList.remove("active");
+		// reset aria-pressed and aria-label (for accessibility)
+		card.setAttribute("aria-pressed", "false");
+		card.setAttribute("aria-label", `Card ${index + 1}, click to flip`);
 	});
 }
 
-// to check if the 2 cards are matched or not
+// check if the 2 cards are matched or not
 function isMatch() {
 	const firstCard_id = firstCard.getAttribute("data-id");
 	const secondCard_id = secondCard.getAttribute("data-id");
-	if (firstCard_id === secondCard_id) {
-		// Match found - play success sound
-		audioManager.playMatch();
 
+	if (firstCard_id === secondCard_id) {
+		// Match found
+		audioManager.playMatch();
 		matched_pairs++;
 		showMatchedPairs();
 		matchedPairsSpan.classList.add("text-success");
+
+		// Visual feedback
 		firstCard.querySelector(".front-face").classList.add("bg-green");
 		secondCard.querySelector(".front-face").classList.add("bg-green");
 		firstCard.setAttribute("data-match", "matched");
 		secondCard.setAttribute("data-match", "matched");
 
-		// Add matched animation
+		// Animation
 		firstCard.classList.add("matched");
 		secondCard.classList.add("matched");
-
-		// Remove animation class after animation
 		setTimeout(() => {
 			firstCard.classList.remove("matched");
 			secondCard.classList.remove("matched");
 		}, 600);
 	} else {
-		// No match - play error sound
+		// No match
 		audioManager.playWrong();
-
 		firstCard.classList.add("wrong");
 		secondCard.classList.add("wrong");
 
@@ -309,8 +231,13 @@ function isMatch() {
 			secondCard.classList.remove("active", "wrong");
 		}, 500);
 		attempts--;
-		showHearts();
+
+		// Update hearts with a small delay to ensure visibility
+		setTimeout(() => {
+			showHearts();
+		}, 100);
 	}
+
 	// Reset variables
 	setTimeout(() => {
 		firstCard = null;
@@ -319,12 +246,9 @@ function isMatch() {
 	}, 500);
 }
 
-const failMatchedPairs = document.querySelector(".fail-matched-pairs");
-// Fail Message
+// fail message
 function failMsg() {
-	// Play losing sound
 	audioManager.playLose();
-
 	const triggerFail = document.getElementById("trigger-fail");
 	const failAttempts = document.querySelector(".fail-attempts");
 	failAttempts.innerText = 5 - attempts;
@@ -332,12 +256,9 @@ function failMsg() {
 	triggerFail.click();
 }
 
-// Success Message
+// success message
 function successMsg() {
-	// Play winning sound
 	audioManager.playWin();
-
-	// Create confetti celebration
 	createConfetti();
 
 	const triggerSuccess = document.getElementById("trigger-success");
@@ -346,13 +267,12 @@ function successMsg() {
 	triggerSuccess.click();
 }
 
-// Create confetti celebration
+// create confetti (celebration in winning state)
 function createConfetti() {
 	const celebration = document.createElement("div");
 	celebration.className = "celebration";
 	document.body.appendChild(celebration);
 
-	// Create confetti pieces
 	for (let i = 0; i < 50; i++) {
 		const confetti = document.createElement("div");
 		confetti.className = "confetti";
@@ -362,23 +282,10 @@ function createConfetti() {
 		celebration.appendChild(confetti);
 	}
 
-	// Remove confetti after animation
-	setTimeout(() => {
-		document.body.removeChild(celebration);
-	}, 3000);
+	setTimeout(() => document.body.removeChild(celebration), 3000);
 }
 
-const closeFailMsg = document.querySelector(".close-fail-msg");
-const closeSuccessMsg = document.querySelector(".close-success-msg");
-restartGame_btns.forEach((btn) => {
-	btn.onclick = () => {
-		restartGame();
-		closeFailMsg.click();
-		closeSuccessMsg.click();
-	};
-});
-
-// Restart the game
+// restart game
 function restartGame() {
 	attempts = 5;
 	showHearts();
@@ -389,40 +296,230 @@ function restartGame() {
 	firstCard = null;
 	secondCard = null;
 
-	// Shuffle cards and regenerate HTML
 	shuffleCards(cards);
 	regenerateCards();
-
 	startBtn.click();
 }
 
-// Function to regenerate cards with new order
-function regenerateCards() {
-	// Clear existing cards
+/* ================== CARD MANAGEMENT ================== */
+// generate cards
+function generateCards() {
 	cardsContainer.innerHTML = "";
-
-	// Generate new cards with shuffled order
-	shuffleCards(cards).forEach((card) => {
+	shuffleCards(cards).forEach((card, index) => {
 		cardsContainer.innerHTML += `
 			<div class="col-4 col-sm-3 col-lg-2">
-				<div class="card border h-300" data-id='${card.id}'>
+				<div 
+					class="card border h-300" 
+					data-id='${card.id}' 
+					role="gridcell"
+					tabindex="0"
+					aria-label="Card ${index + 1}, click to flip"
+					aria-describedby="card-${index + 1}-description"
+				>
 					<div class="front-face font-big bg-secondary h-100 w-100 d-flex justify-content-center align-items-center px-2 rounded">
-						<p class="mb-0">${card.symbol}</p>
+						<p class="mb-0" id="card-${index + 1}-description">${card.symbol}</p>
 					</div>
-					<div class="back-face bg-gray h-100 w-100 rounded"></div>
+					<div class="back-face bg-gray h-100 w-100 rounded" aria-hidden="true">
+						<span class="visually-hidden">Card back, click to reveal</span>
+					</div>
+				</div>
+			</div>
+		`;
+	});
+}
+
+// regenerate cards
+function regenerateCards() {
+	cardsContainer.innerHTML = "";
+	shuffleCards(cards).forEach((card, index) => {
+		cardsContainer.innerHTML += `
+			<div class="col-4 col-sm-3 col-lg-2">
+				<div 
+					class="card border h-300" 
+					data-id='${card.id}'
+					role="gridcell"
+					tabindex="0"
+					aria-label="Card ${index + 1}, click to flip"
+					aria-describedby="card-${index + 1}-description"
+				>
+					<div class="front-face font-big bg-secondary h-100 w-100 d-flex justify-content-center align-items-center px-2 rounded">
+						<p class="mb-0" id="card-${index + 1}-description">${card.symbol}</p>
+					</div>
+					<div class="back-face bg-gray h-100 w-100 rounded" aria-hidden="true">
+						<span class="visually-hidden">Card back, click to reveal</span>
+					</div>
 				</div>
 			</div>
 		`;
 	});
 
-	// Add game start animation class
 	cardsContainer.classList.add("game-start");
-
-	// Remove animation class after animation completes
-	setTimeout(() => {
-		cardsContainer.classList.remove("game-start");
-	}, 1200);
-
-	// Re-attach event listeners to new card elements
+	setTimeout(() => showCardsImmediately(), 200);
+	setTimeout(() => cardsContainer.classList.remove("game-start"), 1200);
 	attachCardEventListeners();
 }
+
+// trigger card animations
+function triggerCardAnimations() {
+	const cardElements = cardsContainer.querySelectorAll(".card");
+	cardElements.forEach((card, index) => {
+		card.style.animation = "none";
+		card.offsetHeight; // Trigger reflow
+		card.style.animation = `cardLoadIn 0.6s ease-out forwards`;
+		card.style.animationDelay = `${index * 0.1}s`;
+	});
+}
+
+// show cards immediately
+function showCardsImmediately() {
+	const cardElements = cardsContainer.querySelectorAll(".card");
+	cardElements.forEach((card) => {
+		card.style.opacity = "1";
+		card.style.transform = "translateY(0) rotateY(0deg) scale(1)";
+		card.style.boxShadow = "var(--shadow-light)";
+	});
+}
+
+// attach card event listeners
+function attachCardEventListeners() {
+	const cardElements = cardsContainer.querySelectorAll(".card");
+
+	// Cursor states and accessibility
+	cardElements.forEach((card) => {
+		card.onmouseover = () => {
+			if (gameStarted && !card.classList.contains("active")) {
+				card.style.cursor = "pointer";
+			} else {
+				card.style.cursor = "not-allowed";
+			}
+		};
+
+		// Card interactions (click and keyboard)
+		const handleCardInteraction = () => {
+			if (
+				gameStarted &&
+				!isCheckingMatch &&
+				card.getAttribute("data-match") !== "matched"
+			) {
+				card.classList.add("active");
+				card.setAttribute("aria-pressed", "true");
+
+				// Update aria-label for flipped state (for accessibility)
+				const cardIndex = Array.from(cardElements).indexOf(card) + 1;
+				const symbol = card.querySelector(".front-face p").textContent;
+				card.setAttribute(
+					"aria-label",
+					`Card ${cardIndex} showing ${symbol}`
+				);
+
+				if (!firstCard) {
+					firstCard = card;
+				} else {
+					secondCard = card;
+					isCheckingMatch = true;
+				}
+				if (firstCard && secondCard) isMatch();
+			}
+		};
+
+		// Click event
+		card.onclick = handleCardInteraction;
+
+		// Keyboard event (Enter and Space)
+		card.onkeydown = (e) => {
+			if (e.key === "Enter" || e.key === " ") {
+				e.preventDefault();
+				handleCardInteraction();
+			}
+		};
+	});
+}
+
+/* ================== ANIMATION FUNCTIONS ================== */
+// create welcome message
+function createWelcomeMessage() {
+	const welcomeDiv = document.createElement("div");
+	welcomeDiv.className = "welcome-message";
+	welcomeDiv.innerHTML = `
+		<div class="welcome-content">
+			<h2>🧠 Memory Game</h2>
+			<p>Test your memory skills!</p>
+		</div>
+	`;
+	document.body.appendChild(welcomeDiv);
+
+	setTimeout(() => {
+		if (welcomeDiv.parentNode) {
+			welcomeDiv.parentNode.removeChild(welcomeDiv);
+		}
+		triggerCardAnimations();
+		initialLoadComplete = true;
+	}, 3000);
+}
+
+// create background animation
+function createBackgroundAnimation() {
+	const bgAnimation = document.createElement("div");
+	bgAnimation.className = "bg-animation";
+	document.body.appendChild(bgAnimation);
+}
+
+// enable audio (required by browsers)
+function enableAudio() {
+	if (
+		audioManager.audioContext &&
+		audioManager.audioContext.state === "suspended"
+	) {
+		audioManager.audioContext.resume();
+	}
+}
+
+/* ================== EVENT LISTENERS ================== */
+// DOMContentLoaded
+document.addEventListener("DOMContentLoaded", () => {
+	if (!initialLoadComplete) {
+		createWelcomeMessage();
+	} else {
+		triggerCardAnimations();
+	}
+
+	createBackgroundAnimation();
+	document.addEventListener("click", enableAudio, { once: true });
+	document.addEventListener("touchstart", enableAudio, { once: true });
+});
+
+// toggle audio
+audioToggle.addEventListener("click", () => audioManager.toggle());
+
+// start button
+startBtn.addEventListener("click", () => {
+	if (!gameStarted) {
+		audioManager.playGameStart();
+		flipCards();
+		startBtn.innerHTML = `<i class="fa-solid fa-rotate-left"></i> Restart the Game`;
+		startBtn.classList.replace("rounded-pill", "rounded");
+		startBtn.classList.replace("bg-primary", "bg-danger");
+
+		setTimeout(() => {
+			resetCards();
+			gameStarted = true;
+		}, 2500);
+	} else {
+		restartGame();
+	}
+});
+
+// restart game buttons
+restartGame_btns.forEach((btn) => {
+	btn.onclick = () => {
+		restartGame();
+		closeFailMsg.click();
+		closeSuccessMsg.click();
+	};
+});
+
+/* ================== INITIALIZATION ================== */
+showHearts();
+showMatchedPairs();
+generateCards();
+attachCardEventListeners();
