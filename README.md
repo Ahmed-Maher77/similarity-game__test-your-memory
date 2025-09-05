@@ -2,14 +2,6 @@
 
 A modern, interactive card-matching game designed to test and improve memory skills. Built with cutting-edge web technologies, this game features stunning visual effects, immersive audio feedback, and smooth animations for an engaging user experience. Players must match pairs of emoji cards within 5 attempts, with each restart providing a fresh randomized challenge. Perfect for casual gaming, brain training, or educational purposes.
 
-## 🌟 **What's New in This Version:**
-
--   **🎵 Full Audio System** - Immersive sound effects for every action
--   **🎨 Modern UI Design** - Beautiful gradients, 3D effects, and glassmorphism
--   **✨ Advanced Animations** - Smooth transitions, confetti celebrations, and visual feedback
--   **🔄 Smart Card Reordering** - Randomized layout on every restart
--   **📱 Enhanced Responsiveness** - Optimized for all devices and screen sizes
-
 <hr>
 
 ### 💻 **Technologies Used**
