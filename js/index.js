@@ -453,6 +453,7 @@ function createWelcomeMessage() {
 			welcomeDiv.parentNode.removeChild(welcomeDiv);
 		}
 		triggerCardAnimations();
+		triggerFooterAnimation();
 		initialLoadComplete = true;
 	}, 3000);
 }
@@ -462,6 +463,17 @@ function createBackgroundAnimation() {
 	const bgAnimation = document.createElement("div");
 	bgAnimation.className = "bg-animation";
 	document.body.appendChild(bgAnimation);
+}
+
+// trigger footer animation
+function triggerFooterAnimation() {
+	const footer = document.querySelector("footer");
+	if (footer) {
+		// Reset animation to trigger it
+		footer.style.animation = "none";
+		footer.offsetHeight; // Trigger reflow
+		footer.style.animation = "footerSlideIn 0.8s ease-out forwards";
+	}
 }
 
 // enable audio (required by browsers)
@@ -481,6 +493,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		createWelcomeMessage();
 	} else {
 		triggerCardAnimations();
+		triggerFooterAnimation();
 	}
 
 	createBackgroundAnimation();
@@ -523,3 +536,7 @@ showHearts();
 showMatchedPairs();
 generateCards();
 attachCardEventListeners();
+
+/* ================== Set Current Year in Footer ================== */
+document.getElementById("copyright-year").textContent =
+	new Date().getFullYear();
