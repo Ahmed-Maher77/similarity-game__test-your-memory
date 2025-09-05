@@ -3,8 +3,8 @@ let matched_pairs = 0;
 let gameStarted = false;
 // flag to temporarily disable clicks while the match check is in progress
 let isCheckingMatch = false;
+let firstCard, secondCard;
 const restartGame_btns = document.querySelectorAll(".restart-game");
-
 
 class Card {
 	constructor(id, symbol) {
@@ -12,7 +12,6 @@ class Card {
 		this.symbol = symbol;
 	}
 }
-
 
 // array of cards
 const cards = [
@@ -25,9 +24,8 @@ const cards = [
 	new Card(4, "🐱"),
 	new Card(4, "🐱"),
 	new Card(5, "🤷‍♀️"),
-	new Card(5, "🤷‍♀️")
+	new Card(5, "🤷‍♀️"),
 ];
-
 
 // Attempts
 const heartsContainer = document.querySelector(".hearts");
@@ -46,7 +44,6 @@ function showHearts() {
 }
 showHearts();
 
-
 // Matched Pairs
 const matchedPairsSpan = document.querySelector(".matched-pairs span");
 function showMatchedPairs() {
@@ -57,10 +54,9 @@ function showMatchedPairs() {
 }
 showMatchedPairs();
 
-
 // arrange cards randomly
-const shuffleCards = (els) => els.sort(() => 0.5 - Math.random());
-
+const shuffleCards = (els) =>
+	els.sort(() => 0.5 - Math.random()).sort(() => 0.5 - Math.random());
 
 // loop over cards >> create each card >> append them to their parent
 const cardsContainer = document.querySelector(".cards");
@@ -69,7 +65,7 @@ shuffleCards(cards).forEach((card) => {
         <div class="col-4 col-sm-3 col-lg-2">
             <div class="card border h-300" data-id='${card.id}'>
                 <div class="front-face font-big bg-secondary h-100 w-100 d-flex justify-content-center align-items-center px-2 rounded">
-                    <p>${card.symbol}</p>
+                    <p class="mb-0">${card.symbol}</p>
                 </div>
                 <div class="back-face bg-gray h-100 w-100 rounded"></div>
             </div>
@@ -77,10 +73,48 @@ shuffleCards(cards).forEach((card) => {
     `;
 });
 
+// Function to attach event listeners to card elements
+function attachCardEventListeners() {
+	const cardElements = cardsContainer.querySelectorAll(".card");
+
+	// Adjust Cursor Status
+	cardElements.forEach((card) => {
+		card.onmouseover = () => {
+			if (gameStarted && !card.classList.contains("active")) {
+				card.style.cursor = "pointer";
+			} else {
+				card.style.cursor = "not-allowed";
+			}
+		};
+	});
+
+	// when click on each card
+	cardElements.forEach((card) => {
+		card.onclick = function () {
+			if (
+				gameStarted &&
+				!isCheckingMatch &&
+				card.getAttribute("data-match") !== "matched"
+			) {
+				card.classList.add("active");
+				if (!firstCard) {
+					firstCard = card;
+				} else {
+					secondCard = card;
+					isCheckingMatch = true;
+				}
+
+				if (firstCard && secondCard) isMatch();
+			}
+		};
+	});
+}
+
+// Attach initial event listeners
+attachCardEventListeners();
 
 // when click the start button >> change its content [start a new game], its color [bg-danger]
 const startBtn = document.getElementById("start-btn");
-const cardElements = cardsContainer.querySelectorAll(".card");
 startBtn.addEventListener("click", () => {
 	if (!gameStarted) {
 		flipCards();
@@ -99,19 +133,9 @@ startBtn.addEventListener("click", () => {
 	}
 });
 
-// Adjust Cusror Status
-cardElements.forEach((card) => {
-	card.onmouseover = () => {
-		if (gameStarted && !card.classList.contains("active")) {
-			card.style.cursor = "pointer";
-		} else {
-			card.style.cursor = "not-allowed";
-		}
-	};
-});
-
 // flip all cards
 function flipCards() {
+	const cardElements = cardsContainer.querySelectorAll(".card");
 	cardElements.forEach((card) => {
 		card.classList.add("active");
 	});
@@ -119,34 +143,18 @@ function flipCards() {
 
 // Reset Cards
 function resetCards() {
+	const cardElements = cardsContainer.querySelectorAll(".card");
 	cardElements.forEach((card) => {
 		card.classList.remove("active");
 	});
 }
-
-// when click on each card
-let firstCard, secondCard;
-cardElements.forEach((card) => {
-	card.onclick = function () {
-		if (gameStarted  && !isCheckingMatch && card.getAttribute("data-match") !== "matched") {
-			card.classList.add("active");
-			if (!firstCard) {
-				firstCard = card;
-			} else {
-				secondCard = card;
-                isCheckingMatch = true;
-			}
-
-			if (firstCard && secondCard) isMatch();
-		}
-	};
-});
 
 // to check if the 2 cards are matched or not
 function isMatch() {
 	const firstCard_id = firstCard.getAttribute("data-id");
 	const secondCard_id = secondCard.getAttribute("data-id");
 	if (firstCard_id === secondCard_id) {
+		// Match found
 		matched_pairs++;
 		showMatchedPairs();
 		matchedPairsSpan.classList.add("text-success");
@@ -154,10 +162,24 @@ function isMatch() {
 		secondCard.querySelector(".front-face").classList.add("bg-green");
 		firstCard.setAttribute("data-match", "matched");
 		secondCard.setAttribute("data-match", "matched");
-	} else {
+
+		// Add matched animation
+		firstCard.classList.add("matched");
+		secondCard.classList.add("matched");
+
+		// Remove animation class after animation
 		setTimeout(() => {
-			firstCard.classList.remove("active");
-			secondCard.classList.remove("active");
+			firstCard.classList.remove("matched");
+			secondCard.classList.remove("matched");
+		}, 600);
+	} else {
+		// No match
+		firstCard.classList.add("wrong");
+		secondCard.classList.add("wrong");
+
+		setTimeout(() => {
+			firstCard.classList.remove("active", "wrong");
+			secondCard.classList.remove("active", "wrong");
 		}, 500);
 		attempts--;
 		showHearts();
@@ -166,12 +188,11 @@ function isMatch() {
 	setTimeout(() => {
 		firstCard = null;
 		secondCard = null;
-        isCheckingMatch = false;
+		isCheckingMatch = false;
 	}, 500);
 }
 
-
-const failMatchedPairs = document.querySelector('.fail-matched-pairs');
+const failMatchedPairs = document.querySelector(".fail-matched-pairs");
 // Fail Message
 function failMsg() {
 	const triggerFail = document.getElementById("trigger-fail");
@@ -183,21 +204,46 @@ function failMsg() {
 
 // Success Message
 function successMsg() {
+	// Create confetti celebration
+	createConfetti();
+
 	const triggerSuccess = document.getElementById("trigger-success");
 	const successAttempts = document.querySelector(".success-attempts");
 	successAttempts.innerText = 5 - attempts;
 	triggerSuccess.click();
 }
 
-const closeFailMsg = document.querySelector('.close-fail-msg');
-const closeSuccessMsg = document.querySelector('.close-success-msg');
-restartGame_btns.forEach(btn => {
+// Create confetti celebration
+function createConfetti() {
+	const celebration = document.createElement("div");
+	celebration.className = "celebration";
+	document.body.appendChild(celebration);
+
+	// Create confetti pieces
+	for (let i = 0; i < 50; i++) {
+		const confetti = document.createElement("div");
+		confetti.className = "confetti";
+		confetti.style.left = Math.random() * 100 + "%";
+		confetti.style.animationDelay = Math.random() * 3 + "s";
+		confetti.style.background = `hsl(${Math.random() * 360}, 70%, 50%)`;
+		celebration.appendChild(confetti);
+	}
+
+	// Remove confetti after animation
+	setTimeout(() => {
+		document.body.removeChild(celebration);
+	}, 3000);
+}
+
+const closeFailMsg = document.querySelector(".close-fail-msg");
+const closeSuccessMsg = document.querySelector(".close-success-msg");
+restartGame_btns.forEach((btn) => {
 	btn.onclick = () => {
 		restartGame();
 		closeFailMsg.click();
 		closeSuccessMsg.click();
 	};
-})
+});
 
 // Restart the game
 function restartGame() {
@@ -207,18 +253,43 @@ function restartGame() {
 	matchedPairsSpan.classList.remove("text-success");
 	showMatchedPairs();
 	gameStarted = false;
-    firstCard = null;
-    secondCard = null;
-    // Reset the card elements
-	cardElements.forEach((card) => {
-        card.classList.remove("active");
-		card.querySelector(".front-face").classList.remove("bg-green");
-		card.setAttribute("data-match", "");
-	});
-    // Reset the start button
-    startBtn.innerHTML = `<i class="fa-solid fa-play"></i> Start Game`;
-    startBtn.classList.replace("bg-danger", "bg-primary");
-    startBtn.classList.replace("rounded", "rounded-pill");
-    // shuffleCards(cards);
+	firstCard = null;
+	secondCard = null;
+
+	// Shuffle cards and regenerate HTML
+	shuffleCards(cards);
+	regenerateCards();
+
 	startBtn.click();
+}
+
+// Function to regenerate cards with new order
+function regenerateCards() {
+	// Clear existing cards
+	cardsContainer.innerHTML = "";
+
+	// Generate new cards with shuffled order
+	shuffleCards(cards).forEach((card) => {
+		cardsContainer.innerHTML += `
+			<div class="col-4 col-sm-3 col-lg-2">
+				<div class="card border h-300" data-id='${card.id}'>
+					<div class="front-face font-big bg-secondary h-100 w-100 d-flex justify-content-center align-items-center px-2 rounded">
+						<p class="mb-0">${card.symbol}</p>
+					</div>
+					<div class="back-face bg-gray h-100 w-100 rounded"></div>
+				</div>
+			</div>
+		`;
+	});
+
+	// Add game start animation class
+	cardsContainer.classList.add("game-start");
+
+	// Remove animation class after animation completes
+	setTimeout(() => {
+		cardsContainer.classList.remove("game-start");
+	}, 1200);
+
+	// Re-attach event listeners to new card elements
+	attachCardEventListeners();
 }
