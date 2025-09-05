@@ -4,11 +4,17 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Memory Match Game - Test Your Skills and Have Fun!</title>
-		<meta name="description" content="Play the Memory Match Game, a fun and challenging card-matching game to test your memory skills. Built with HTML, CSS, JavaScript, and Bootstrap for an interactive experience.">
-		<meta name="keywords" content="Memory Match Game, Card Matching Game, HTML Game, JavaScript Game, Bootstrap Game, Fun Memory Game, Memory Skills, Card Game Online">
-		<meta name="author" content="Ahmed Maher">
+		<meta
+			name="description"
+			content="Play the Memory Match Game, a fun and challenging card-matching game to test your memory skills. Built with HTML, CSS, JavaScript, and Bootstrap for an interactive experience."
+		/>
+		<meta
+			name="keywords"
+			content="Memory Match Game, Card Matching Game, HTML Game, JavaScript Game, Bootstrap Game, Fun Memory Game, Memory Skills, Card Game Online"
+		/>
+		<meta name="author" content="Ahmed Maher" />
 		<!-- Logo -->
-		<link rel="icon" href="images/logo.png">
+		<link rel="icon" href="images/logo.png" />
 		<!-- Font Awesome -->
 		<link rel="stylesheet" href="css/all.min.css" />
 		<!-- Bootstrap -->
@@ -22,7 +28,9 @@
 				<div class="container-fluid p-2 px-4">
 					<div class="row row-gap-2">
 						<!-- Attempts -->
-						<div class="attempts d-flex gap-2 align-items-center col-12 col-md">
+						<div
+							class="attempts d-flex gap-2 align-items-center col-12 col-md"
+						>
 							<p class="mb-0 fs-6 fs-md-4 fw-medium">Attempts:</p>
 							<div class="hearts mt-1"></div>
 						</div>
@@ -33,6 +41,14 @@
 							<p class="mb-0">Matched Pairs:</p>
 							<span></span>
 						</div>
+						<!-- Audio Toggle -->
+						<button
+							class="btn btn-outline-secondary p-205 px-3 rounded-pill mw-fit me-2"
+							id="audio-toggle"
+							title="Toggle Sound"
+						>
+							<i class="fa-solid fa-volume-high"></i>
+						</button>
 						<!-- Start Button -->
 						<button
 							class="btn bg-primary text-white p-205 px-4 rounded-pill mw-fit"
@@ -44,7 +60,9 @@
 				</div>
 			</header>
 			<div class="container">
-				<div class="cards row mt-5 row-gap-3 justify-content-center"></div>
+				<div
+					class="cards row mt-5 row-gap-3 justify-content-center"
+				></div>
 			</div>
 
 			<!-- Popup Messages -->
@@ -78,15 +96,23 @@
 								></button>
 							</div>
 							<div class="modal-body text-center py-5">
-								<h3 class="mb-5">Congratulations! 👏 You won</h3>
+								<h3 class="mb-5">
+									Congratulations! 👏 You won
+								</h3>
 								<p class="fw-medium fs-5">
-									Attempts: <span class="text-danger success-attempts"></span>
+									Attempts:
+									<span
+										class="text-danger success-attempts"
+									></span>
 								</p>
 								<p class="fw-medium fs-5">
-									Matched Pairs: <span class="text-success">5</span>/5
+									Matched Pairs:
+									<span class="text-success">5</span>/5
 								</p>
 							</div>
-							<div class="modal-footer d-flex justify-content-between">
+							<div
+								class="modal-footer d-flex justify-content-between"
+							>
 								<button
 									type="button"
 									class="btn btn-danger py-2 close-success-msg"
@@ -94,8 +120,12 @@
 								>
 									Close
 								</button>
-								<button type="button" class="btn btn-primary py-2 restart-game">
-									<i class="fa-solid fa-rotate-left"></i> Start a new game
+								<button
+									type="button"
+									class="btn btn-primary py-2 restart-game"
+								>
+									<i class="fa-solid fa-rotate-left"></i>
+									Start a new game
 								</button>
 							</div>
 						</div>
@@ -132,13 +162,22 @@
 							<div class="modal-body text-center py-5">
 								<h3 class="mb-5">You lost 😥</h3>
 								<p class="fw-medium fs-5">
-									Attempts: <span class="text-danger fail-attempts"></span>
+									Attempts:
+									<span
+										class="text-danger fail-attempts"
+									></span>
 								</p>
 								<p class="fw-medium fs-5">
-									Matched Pairs: <span class="text-success fail-matched-pairs"></span>/5
+									Matched Pairs:
+									<span
+										class="text-success fail-matched-pairs"
+									></span
+									>/5
 								</p>
 							</div>
-							<div class="modal-footer d-flex justify-content-between">
+							<div
+								class="modal-footer d-flex justify-content-between"
+							>
 								<button
 									type="button"
 									class="btn btn-danger py-2 close-fail-msg"
@@ -146,8 +185,12 @@
 								>
 									Close
 								</button>
-								<button type="button" class="btn btn-primary py-2 restart-game">
-									<i class="fa-solid fa-rotate-left"></i> Start a new game
+								<button
+									type="button"
+									class="btn btn-primary py-2 restart-game"
+								>
+									<i class="fa-solid fa-rotate-left"></i>
+									Start a new game
 								</button>
 							</div>
 						</div>

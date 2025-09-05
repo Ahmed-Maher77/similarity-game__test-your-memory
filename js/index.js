@@ -6,6 +6,126 @@ let isCheckingMatch = false;
 let firstCard, secondCard;
 const restartGame_btns = document.querySelectorAll(".restart-game");
 
+// Audio system
+class AudioManager {
+	constructor() {
+		this.audioContext = null;
+		this.isEnabled = true;
+		this.initAudio();
+	}
+
+	initAudio() {
+		try {
+			this.audioContext = new (window.AudioContext ||
+				window.webkitAudioContext)();
+		} catch (e) {
+			console.log("Web Audio API not supported");
+		}
+	}
+
+	playTone(frequency, duration, type = "sine", volume = 0.3) {
+		if (!this.audioContext || !this.isEnabled) return;
+
+		const oscillator = this.audioContext.createOscillator();
+		const gainNode = this.audioContext.createGain();
+
+		oscillator.connect(gainNode);
+		gainNode.connect(this.audioContext.destination);
+
+		oscillator.frequency.setValueAtTime(
+			frequency,
+			this.audioContext.currentTime
+		);
+		oscillator.type = type;
+
+		gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+		gainNode.gain.linearRampToValueAtTime(
+			volume,
+			this.audioContext.currentTime + 0.01
+		);
+		gainNode.gain.exponentialRampToValueAtTime(
+			0.001,
+			this.audioContext.currentTime + duration
+		);
+
+		oscillator.start(this.audioContext.currentTime);
+		oscillator.stop(this.audioContext.currentTime + duration);
+	}
+
+	toggle() {
+		this.isEnabled = !this.isEnabled;
+		const icon = document.querySelector("#audio-toggle i");
+		if (this.isEnabled) {
+			icon.className = "fa-solid fa-volume-high";
+		} else {
+			icon.className = "fa-solid fa-volume-mute";
+		}
+	}
+
+	playGameStart() {
+		// Ascending melody for game start
+		const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+		notes.forEach((note, index) => {
+			setTimeout(() => {
+				this.playTone(note, 0.3, "sine", 0.2);
+			}, index * 150);
+		});
+	}
+
+	playWin() {
+		// Victory fanfare
+		const notes = [523.25, 659.25, 783.99, 1046.5, 1318.51]; // C5, E5, G5, C6, E6
+		notes.forEach((note, index) => {
+			setTimeout(() => {
+				this.playTone(note, 0.4, "sine", 0.25);
+			}, index * 200);
+		});
+	}
+
+	playLose() {
+		// Descending sad melody
+		const notes = [523.25, 466.16, 415.3, 369.99]; // C5, A#4, G#4, F#4
+		notes.forEach((note, index) => {
+			setTimeout(() => {
+				this.playTone(note, 0.5, "sawtooth", 0.2);
+			}, index * 200);
+		});
+	}
+
+	playMatch() {
+		// Short success sound
+		this.playTone(659.25, 0.2, "sine", 0.15); // E5
+	}
+
+	playWrong() {
+		// Short error sound
+		this.playTone(220, 0.3, "sawtooth", 0.2); // A3
+	}
+}
+
+// Initialize audio manager
+const audioManager = new AudioManager();
+
+// Enable audio on first user interaction
+function enableAudio() {
+	if (
+		audioManager.audioContext &&
+		audioManager.audioContext.state === "suspended"
+	) {
+		audioManager.audioContext.resume();
+	}
+}
+
+// Add event listeners for audio enablement
+document.addEventListener("click", enableAudio, { once: true });
+document.addEventListener("touchstart", enableAudio, { once: true });
+
+// Audio toggle button
+const audioToggle = document.getElementById("audio-toggle");
+audioToggle.addEventListener("click", () => {
+	audioManager.toggle();
+});
+
 class Card {
 	constructor(id, symbol) {
 		this.id = id;
@@ -117,6 +237,9 @@ attachCardEventListeners();
 const startBtn = document.getElementById("start-btn");
 startBtn.addEventListener("click", () => {
 	if (!gameStarted) {
+		// Play game start sound
+		audioManager.playGameStart();
+
 		flipCards();
 		// change the button content
 		startBtn.innerHTML = `<i class="fa-solid fa-rotate-left"></i> Restart the Game`;
@@ -154,7 +277,9 @@ function isMatch() {
 	const firstCard_id = firstCard.getAttribute("data-id");
 	const secondCard_id = secondCard.getAttribute("data-id");
 	if (firstCard_id === secondCard_id) {
-		// Match found
+		// Match found - play success sound
+		audioManager.playMatch();
+
 		matched_pairs++;
 		showMatchedPairs();
 		matchedPairsSpan.classList.add("text-success");
@@ -173,7 +298,9 @@ function isMatch() {
 			secondCard.classList.remove("matched");
 		}, 600);
 	} else {
-		// No match
+		// No match - play error sound
+		audioManager.playWrong();
+
 		firstCard.classList.add("wrong");
 		secondCard.classList.add("wrong");
 
@@ -195,6 +322,9 @@ function isMatch() {
 const failMatchedPairs = document.querySelector(".fail-matched-pairs");
 // Fail Message
 function failMsg() {
+	// Play losing sound
+	audioManager.playLose();
+
 	const triggerFail = document.getElementById("trigger-fail");
 	const failAttempts = document.querySelector(".fail-attempts");
 	failAttempts.innerText = 5 - attempts;
@@ -204,6 +334,9 @@ function failMsg() {
 
 // Success Message
 function successMsg() {
+	// Play winning sound
+	audioManager.playWin();
+
 	// Create confetti celebration
 	createConfetti();
 
