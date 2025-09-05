@@ -505,7 +505,7 @@ function createWelcomeMessage() {
 		triggerCardAnimations();
 		triggerFooterAnimation();
 		initialLoadComplete = true;
-	}, 3000);
+	}, 300000);
 }
 
 // create background animation
