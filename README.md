@@ -45,13 +45,21 @@ A fun and interactive card-matching game designed to test and improve memory ski
 
 <hr>
 
-### 📥 Instructions for Local Setup
-To run this project locally, follow these steps:
-1. Clone the repository:
-=> git clone https://github.com/Ahmed-Maher77/similarity-game__test-your-memory.git
-2. Open the project folder (similarity-game__test-your-memory)
-3. Open the **index.html** file in your browser to start the game.
+### 📥 Local Setup Instructions
 
+Follow these steps to run the project locally:
+
+1. **Clone the repository**  
+   ```bash
+   git clone https://github.com/Ahmed-Maher77/similarity-game__test-your-memory.git
+   ```
+2. **Navigate to the project directory**
+   ```
+   cd similarity-game__test-your-memory
+   ```
+3. **Run the application**
+   Open the ```index.html``` file in your preferred browser to start the game.
+   
 <hr/>
 
 ## 📬 Contact & Contribution
