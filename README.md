@@ -85,7 +85,7 @@ A modern, interactive card-matching game designed to test and improve memory ski
 ## 👀 Website Preview:
 
 <a href="https://ahmed-maher77.github.io/similarity-game__test-your-memory/" title="demo">
-  <img src="uploaded-img-on-github-readme" alt="website preview" width="400">
+  <img src="https://github.com/user-attachments/assets/f1868891-cb36-48c0-8847-d5fea25825d0" alt="website preview - UI Mockup" width="400">
 </a>
 
 <hr>
