@@ -29,39 +29,57 @@ A modern, interactive card-matching game designed to test and improve memory ski
 
 <hr>
 
-### ✨ Key Features:
+### ✨ Key Features
 
--   **🎮 Interactive Card Matching:** Players flip cards to find matching pairs, testing their memory skills with emoji symbols
--   **🔄 Smart Card Reordering:** Each game restart shuffles cards randomly, ensuring a unique challenge every time
--   **🎯 Attempt Limitation:** Limited to 5 attempts to complete the game, adding strategic challenge
--   **📊 Real-time Progress Tracking:** Live counter for matched pairs and remaining attempts
--   **🎨 Gradient Color Scheme:** Beautiful modern gradients with CSS custom properties for consistent theming
--   **💎 3D Card Effects:** Cards feature shadows, rounded corners, and smooth 3D transform animations
--   **📱 Responsive Design:** Mobile-first approach with Bootstrap grid system, works seamlessly across all devices
--   **✨ Interactive Hover Effects:** Cards lift and scale on hover for enhanced user feedback
--   **🔮 Glassmorphism Header:** Backdrop blur effect for a modern, polished appearance
--   **🎵 Game Start Sound:** Ascending melody when starting a new game
--   **✅ Match Success Audio:** Pleasant tone when cards match correctly
--   **❌ Error Feedback:** Distinct sound when cards don't match
--   **🏆 Victory Fanfare:** Celebratory audio when winning the game
--   **😢 Losing Melody:** Descending sad melody when game ends in failure
--   **🔊 Audio Toggle:** Built-in sound on/off control for user preference
--   **🎭 Card Flip Animations:** Smooth 3D rotation with scale effects
--   **🎉 Match Celebration:** Pulsing animation for successful matches
--   **📳 Error Shake:** Shake animation for incorrect matches
--   **🚀 Game Start Animation:** Cards animate in with bounce effect on restart
--   **🎊 Confetti Celebration:** Colorful confetti animation on victory
--   **⚡ Smooth Transitions:** All interactions feature smooth, polished transitions
--   **💚 Visual Match Indicators:** Cards turn green and scale when matched
--   **❤️ Heart-based Attempt System:** Visual hearts show remaining attempts
--   **🎪 Success/Failure Modals:** Beautiful popup modals with gradient styling
--   **📈 Real-time Score Updates:** Instant feedback on progress and performance
--   **🖱️ Cursor States:** Smart cursor changes based on game state
--   **🎼 Web Audio API:** Programmatically generated sounds for cross-platform compatibility
--   **⚙️ Modern JavaScript:** ES6+ features with clean, maintainable code structure
--   **🎨 CSS Custom Properties:** Consistent theming with CSS variables
--   **🌐 Cross-Browser Support:** Works in all modern browsers with fallbacks
--   **⚡ Performance Optimized:** Smooth 60fps animations and efficient rendering
+#### 🎮 **Core Gameplay**
+
+-   **Interactive Card Matching System:** Intuitive card-flipping mechanics with emoji-based symbols for memory testing
+-   **Dynamic Card Shuffling:** Randomized card placement ensures unique gameplay experience on each restart
+-   **Strategic Challenge System:** Limited to 5 attempts per game, requiring strategic thinking and memory optimization
+-   **Real-time Progress Monitoring:** Live tracking of matched pairs and remaining attempts with instant visual feedback
+
+#### 🎨 **Visual Design & User Experience**
+
+-   **Modern Gradient Color Scheme:** Sophisticated CSS custom properties for consistent, professional theming
+-   **3D Card Effects:** Advanced shadow systems, rounded corners, and smooth transform animations
+-   **Responsive Design Architecture:** Mobile-first approach with Bootstrap 5 grid system for cross-device compatibility
+-   **Interactive Hover States:** Enhanced user feedback through card elevation and scaling effects
+-   **Glassmorphism UI Elements:** Contemporary backdrop blur effects for modern, polished interface design
+
+#### 🔊 **Audio System**
+
+-   **Game Start Audio:** Ascending melodic sequence for game initialization
+-   **Success Feedback:** Pleasant audio confirmation for correct card matches
+-   **Error Notification:** Distinctive sound alerts for incorrect attempts
+-   **Victory Celebration:** Triumphant fanfare audio for successful game completion
+-   **Failure Feedback:** Descending melodic sequence for game over scenarios
+-   **Audio Control System:** Built-in toggle functionality for user preference management
+-   **Web Audio API Integration:** Programmatically generated sounds ensuring cross-platform compatibility
+
+#### 🎭 **Animation & Visual Effects**
+
+-   **Card Flip Animations:** Smooth 3D rotation with scale transformations
+-   **Match Celebration Effects:** Pulsing animations for successful pair matches
+-   **Error State Animations:** Shake effects for incorrect match attempts
+-   **Game Initialization:** Bounce animation sequence for card reveal on restart
+-   **Victory Confetti System:** Colorful particle effects for game completion celebration
+-   **Smooth Transition Engine:** Polished 60fps animations across all interactive elements
+
+#### 💡 **User Interface Features**
+
+-   **Visual Match Indicators:** Color-coded feedback system with green highlighting for successful matches
+-   **Heart-based Attempt Visualization:** Intuitive remaining attempts display using heart icons
+-   **Modal Dialog System:** Professional popup notifications with gradient styling for game outcomes
+-   **Dynamic Cursor States:** Context-aware cursor changes based on current game state
+-   **Real-time Score Updates:** Instant performance feedback and progress visualization
+
+#### ⚙️ **Technical Implementation**
+
+-   **Modern JavaScript Architecture:** ES6+ features with clean, maintainable code structure
+-   **CSS Custom Properties:** Consistent theming system with CSS variables for easy customization
+-   **Cross-Browser Compatibility:** Comprehensive support for all modern web browsers with fallback systems
+-   **Performance Optimization:** Efficient rendering pipeline ensuring smooth 60fps animations
+-   **Accessibility Features:** Semantic HTML structure with ARIA compliance for inclusive user experience
 
 <hr>
 
